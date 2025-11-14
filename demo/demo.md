@@ -122,13 +122,13 @@ Chuyển sang Fullnode và thực hiện gửi coin cho ví 1 và ví 2.
 
 - Gửi cho ví 1 và ví 2 mỗi ví 10 coin:
     ```bash
-    172.17.0.2 root@fullnode:~# tcoin send -from 13QLoHmb1QrUeZK4DNDv1DP337rojpCW9t -to 1BYYGAJmGiH8XZs2hHcCkd6ix3yaKPLFN8 -amount 10 -mine
+    [fullnode]$ tcoin send -from 13QLoHmb1QrUeZK4DNDv1DP337rojpCW9t -to 1BYYGAJmGiH8XZs2hHcCkd6ix3yaKPLFN8 -amount 10 -mine
     000063505c720728db4afc2c264a868f09d644826e5fd3b8368c14e401614fd6
 
     Success!
 
 
-    172.17.0.2 root@fullnode:~# tcoin send -from 13QLoHmb1QrUeZK4DNDv1DP337rojpCW9t -to 1BmsTS98y8VgpCmVbncW4WL2u7fy3W4ZTv -amount 10 -mine
+    [fullnode]$ tcoin send -from 13QLoHmb1QrUeZK4DNDv1DP337rojpCW9t -to 1BmsTS98y8VgpCmVbncW4WL2u7fy3W4ZTv -amount 10 -mine
     0000f54936e50d84af9a41eee82b265e2f64e36a014add92d75b466fc56cbfd5
 
     Success!
