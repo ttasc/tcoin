@@ -1,4 +1,4 @@
-## Vai trò các nút trong bitcoin
+## 1. Vai trò các nút trong bitcoin
 
 1. **Miner**
 
@@ -14,11 +14,11 @@
 
     SPV là viết tắt của Simplified Payment Verification (Xác minh Thanh toán Đơn giản). Các nút này không lưu trữ toàn bộ bản sao blockchain, nhưng vẫn có thể xác minh các giao dịch (không phải tất cả, mà chỉ một tập hợp con, ví dụ, các giao dịch được gửi đến một địa chỉ cụ thể). Một nút SPV phụ thuộc vào một nút đầy đủ để lấy dữ liệu, và có thể có nhiều nút SPV được kết nối với một nút đầy đủ. SPV giúp các ứng dụng ví trở nên khả thi: người dùng không cần tải xuống toàn bộ blockchain, nhưng vẫn có thể xác minh các giao dịch của mình.
 
-## Đơn giản hóa mạng
+## 2. Đơn giản hóa mạng
 
 Để triển khai mạng lưới trong blockchain, ta cần đơn giản hóa một số thứ. Vấn đề là ta không có nhiều máy tính để mô phỏng một mạng lưới với nhiều nút. Ta sẽ sử dụng Docker để giải quyết vấn đề này, các máy tính (ở đây là các container) sẽ giao tiếp ở cổng 3000.
 
-## Triển khai thực tế
+## 3. Triển khai thực tế
 
 Điều gì sẽ xảy ra khi bạn tải xuống, chẳng hạn như Bitcoin Core và chạy nó lần đầu tiên? Nó phải kết nối với một số nút để tải xuống trạng thái mới nhất của blockchain. Thử nghĩ đến việc máy tính của bạn làm sao biết được một máy tính nào đó khác có lưu trạng thái blockchain để yêu cầu tải xuống? Đó là nút nào?
 
@@ -32,15 +32,15 @@ Tuy nhiên, trong quá trình triển khai, ta sẽ tập trung hóa. Ta sẽ c�
 
 > Ta sẽ hardcode địa chỉ của nút trung tâm để tất cả các nút đều có thể liên lạc với nút trung tâm.
 
-## Demo
-### Quy ước cách gọi
+## 4. Demo
+### 4.1 Quy ước cách gọi
 Trước tiên ta cần quy ước cách gọi để dễ dàng quan sát và hiểu vai trò của từng nút trong demo so với bitcoin:
 - **Host**: Là máy tính vật lý có vai trò trung gian để phân phát tài nguyên động thay vì hardcode như trong bitcoin
 - **Fullnode**: có vai trò như một nút đầy đủ, và ở trong demo này chúng còn có vai trò là nút trung tâm để tiếp nhận và phân phát dữ liệu
 - **Miner**: có vai trò là nút khai thác
 - **Wallet**: là các nút ví có vai trò thực hiện giao dịch, nếu bạn dùng tcoin để giao dịch, thiết bị của bạn là một nút Wallet
 
-### Kịch bản
+### 4.2 Kịch bản
 Ta sẽ triển khai tình huống sau:
 1. **Fullnode** tạo ra một blockchain.
 2. **Wallets** kết nối với nó và tải xuống blockchain.
@@ -52,13 +52,13 @@ Ta sẽ triển khai tình huống sau:
 8. **Wallets** đồng bộ hóa với nút trung tâm.
 9. Người dùng nút ví (**Wallets**) kiểm tra xem thanh toán của họ đã thành công chưa.
 
-### Triển khai
+### 4.3 Triển khai
 
-#### Yêu cầu
+#### 4.3.1 Yêu cầu
 - Go & source code (Nếu dựng file nhị phân từ mã nguồn)
 - Docker
 
-#### Chuẩn bị
+#### 4.3.2 Chuẩn bị
 Trước tiên ta sẽ dùng docker để tạo ra 3 container dựa trên ubuntu image và đặt hostname cho chúng lần lượt là: `fullnode`, `miner` và `wallet`.
 
 Ta sẽ dùng lớp mạng mặc định mà docker gán cho các container (bridge driver). Lần lượt log-on vào các container theo thứ tự sẽ được các địa chỉ như sau:
@@ -68,7 +68,7 @@ Ta sẽ dùng lớp mạng mặc định mà docker gán cho các container (bri
 - wallet: `172.17.0.4`
 
 
-#### Thực hiện
+#### 4.3.3 Thực hiện
 
 ##### Fullnode
 
