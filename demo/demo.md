@@ -32,7 +32,7 @@ Tuy nhiên, trong quá trình triển khai, ta sẽ tập trung hóa. Ta sẽ c�
 
 > Ta sẽ hardcode địa chỉ của nút trung tâm để tất cả các nút đều có thể liên lạc với nút trung tâm.
 
-## 4. Demo
+## 4. Quy trình Demo
 ### 4.1 Quy ước cách gọi
 Trước tiên ta cần quy ước cách gọi để dễ dàng quan sát và hiểu vai trò của từng nút trong demo so với bitcoin:
 - **Host**: Là máy tính vật lý có vai trò trung gian để phân phát tài nguyên động thay vì hardcode như trong bitcoin
