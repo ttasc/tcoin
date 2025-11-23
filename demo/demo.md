@@ -1,4 +1,4 @@
-## 1. Vai trò các nút trong bitcoin
+### 1. Vai trò các nút trong bitcoin
 
 1. **Miner**
 
@@ -14,11 +14,11 @@
 
     SPV là viết tắt của Simplified Payment Verification (Xác minh Thanh toán Đơn giản). Các nút này không lưu trữ toàn bộ bản sao blockchain, nhưng vẫn có thể xác minh các giao dịch (không phải tất cả, mà chỉ một tập hợp con, ví dụ, các giao dịch được gửi đến một địa chỉ cụ thể). Một nút SPV phụ thuộc vào một nút đầy đủ để lấy dữ liệu, và có thể có nhiều nút SPV được kết nối với một nút đầy đủ. SPV giúp các ứng dụng ví trở nên khả thi: người dùng không cần tải xuống toàn bộ blockchain, nhưng vẫn có thể xác minh các giao dịch của mình.
 
-## 2. Đơn giản hóa mạng
+### 2. Đơn giản hóa mạng
 
 Để triển khai mạng lưới trong blockchain, ta cần đơn giản hóa một số thứ. Vấn đề là ta không có nhiều máy tính để mô phỏng một mạng lưới với nhiều nút. Ta sẽ sử dụng Docker để giải quyết vấn đề này, các máy tính (ở đây là các container) sẽ giao tiếp ở cổng 3000.
 
-## 3. Triển khai thực tế
+### 3. Triển khai thực tế
 
 Điều gì sẽ xảy ra khi bạn tải xuống, chẳng hạn như Bitcoin Core và chạy nó lần đầu tiên? Nó phải kết nối với một số nút để tải xuống trạng thái mới nhất của blockchain. Thử nghĩ đến việc máy tính của bạn làm sao biết được một máy tính nào đó khác có lưu trạng thái blockchain để yêu cầu tải xuống? Đó là nút nào?
 
@@ -32,15 +32,15 @@ Tuy nhiên, trong quá trình triển khai, ta sẽ tập trung hóa. Ta sẽ c�
 
 > Ta sẽ hardcode địa chỉ của nút trung tâm để tất cả các nút đều có thể liên lạc với nút trung tâm.
 
-## 4. Quy trình Demo
-### 4.1 Quy ước cách gọi
+### 4. Quy trình Demo
+#### 4.1 Quy ước cách gọi
 Trước tiên ta cần quy ước cách gọi để dễ dàng quan sát và hiểu vai trò của từng nút trong demo so với bitcoin:
 - **Host**: Là máy tính vật lý có vai trò trung gian để phân phát tài nguyên động thay vì hardcode như trong bitcoin
 - **Fullnode**: có vai trò như một nút đầy đủ, và ở trong demo này chúng còn có vai trò là nút trung tâm để tiếp nhận và phân phát dữ liệu
 - **Miner**: có vai trò là nút khai thác
 - **Wallet**: là các nút ví có vai trò thực hiện giao dịch, nếu bạn dùng tcoin để giao dịch, thiết bị của bạn là một nút Wallet
 
-### 4.2 Kịch bản
+#### 4.2 Kịch bản
 Ta sẽ triển khai tình huống sau:
 1. **Fullnode** tạo ra một blockchain.
 2. **Wallets** kết nối với nó và tải xuống blockchain.
@@ -52,13 +52,13 @@ Ta sẽ triển khai tình huống sau:
 8. **Wallets** đồng bộ hóa với nút trung tâm.
 9. Người dùng nút ví (**Wallets**) kiểm tra xem thanh toán của họ đã thành công chưa.
 
-### 4.3 Triển khai
+#### 4.3 Triển khai
 
-#### 4.3.1 Yêu cầu
+##### 4.3.1 Yêu cầu
 - Go & source code (Nếu dựng file nhị phân từ mã nguồn)
 - Docker
 
-#### 4.3.2 Chuẩn bị
+##### 4.3.2 Chuẩn bị
 Trước tiên ta sẽ dùng docker để tạo ra 3 container dựa trên ubuntu image và đặt hostname cho chúng lần lượt là: `fullnode`, `miner` và `wallet`.
 
 Ta sẽ dùng lớp mạng mặc định mà docker gán cho các container (bridge driver). Lần lượt log-on vào các container theo thứ tự sẽ được các địa chỉ như sau:
@@ -68,9 +68,9 @@ Ta sẽ dùng lớp mạng mặc định mà docker gán cho các container (bri
 - wallet: `172.17.0.4`
 
 
-#### 4.3.3 Thực hiện
+##### 4.3.3 Thực hiện
 
-##### Fullnode
+###### Fullnode
 
 - Ở đây, thiết bị Fullnode sẽ là nút tạo ra blockchain và tạo ra block đầu tiên trong tcoin, ta cần một địa chỉ để nút này thu về phần thưởng khi tạo ra block đầu tiên (trong bitcoin, địa chỉ nhận phần thưởng của block đầu tiên thuộc về Satoshi):
     ```bash
@@ -90,13 +90,13 @@ Ta sẽ dùng lớp mạng mặc định mà docker gán cho các container (bri
     tcoin printchain
     ```
 
-##### Host
+###### Host
 Do ta không hardcode genesis block nên sẽ dùng máy vật lý để phân phát genesis block cho các nút. Trước tiên ta sẽ copy genesis block từ container ra máy vật lý:
 ```bash
 docker cp fullnode:/root/blockchain_172.17.0.2.db blockchain_genesis.db
 ```
 
-##### Wallet
+###### Wallet
 Chuyển sang các nút Wallet và tạo ra một số ví để thực hiện giao dịch.
 - Tạo 4 địa chỉ ví:
     ```bash
@@ -112,7 +112,7 @@ Chuyển sang các nút Wallet và tạo ra một số ví để thực hiện g
     ```
 > Theo thứ tự được liệt kê bởi lệnh trên, ta sẽ gọi chúng là các ví 1, ví 2, ví 3, ví 4.
 
-##### Fullnode
+###### Fullnode
 Chuyển sang Fullnode và thực hiện gửi coin cho ví 1 và ví 2.
 - Gửi tiền và đào các block:
     ```bash
@@ -139,13 +139,13 @@ Chuyển sang Fullnode và thực hiện gửi coin cho ví 1 và ví 2.
     tcoin startnode
     ```
 
-##### Host
+###### Host
 Trước khi chuyển sang nút Wallet để gia nhập mạng blockchain, nút Wallet cần biết đâu là blockchain mà nó sẽ gia nhập thông qua genesis block (một lần nữa, genesis block được hardcode!), do đó ta cần copy genesis block từ máy vật lý vào `wallet` container:
 ```bash
 docker cp blockchain_genesis.db wallet:/root/blockchain_172.17.0.4.db
 ```
 
-##### Wallet
+###### Wallet
 - Tại nút Wallet, khởi chạy nút sẽ bắt đầu tải xuống tất cả các block từ nút trung tâm Fullnode:
     ```bash
     tcoin startnode
@@ -171,13 +171,13 @@ docker cp blockchain_genesis.db wallet:/root/blockchain_172.17.0.4.db
     Balance of '13QLoHmb1QrUeZK4DNDv1DP337rojpCW9t': 10
     ```
 
-##### Host
+###### Host
 Được rồi, đã đến lúc các thợ đào gia nhập đội hình! Tương tự như các nút khác, các thợ đào cũng cần phải biết đâu là blockchain chính thống, chúng ta vẫn phải copy genesis block cho các thợ đào:
 ```bash
 docker cp blockchain_genesis.db miner:/root/blockchain_172.17.0.3.db
 ```
 
-##### Miner
+###### Miner
 - Trước tiên các thợ đào cần có một địa chỉ ví để nhận phần thưởng khi đào được các block:
     ```bash
     [miner]$ tcoin createwallet
@@ -188,7 +188,7 @@ docker cp blockchain_genesis.db miner:/root/blockchain_172.17.0.3.db
     tcoin startnode -miner 1BJiAuYqcChkQCMH8LHWWZT177J4PjuHDw
     ```
 
-##### Wallet
+###### Wallet
 Chuyển sang nút Wallet và bắt đầu chuyển tiền nào!
 - Gửi `1 coin từ ví 1 vào ví 3` và `1 coin từ ví 2 vào ví 4`:
     ```bash
