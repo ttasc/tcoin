@@ -87,7 +87,7 @@ Giờ đây `nonce` phải được lưu thành một thuộc tính của Block 
 
 Giao dịch là cốt lõi của Bitcoin, và mục đích duy nhất của blockchain là lưu trữ giao dịch một cách an toàn và đáng tin cậy, để không ai có thể sửa đổi chúng sau khi chúng được tạo ra.
 
-### Giao dịch trong bitcoin
+### Giao dịch trong Bitcoin
 
 Giao dịch là sự kết hợp giữa **inputs** và **outputs**.
 
@@ -164,6 +164,9 @@ Giả sử ví A muốn gửi `n` coins cho ví B:
 2. Từ các **outputs** chưa chi vừa tìm, ta tạo một danh sách các **inputs** tương ứng tham chiếu đến các **outputs** này.
 3. Tiếp theo, tạo một **outputs** và khóa nó với địa chỉ của người nhận. Nếu số coins tổng thể mà ta tìm được lớn hơn số tiền cần gửi, khi này phải tạo thêm một **outputs** nữa có giá trị bằng phần tiền thừa và khóa nó với địa chỉ của người gửi.
 4. Khi đã có đủ **inputs** và **outputs** hợp lệ, một **Transaction** sẽ được tạo ra.
+5. Cuối cùng, sau khi đã có đủ dữ liệu cần thiết, việc "đào" sẽ được tiến hành sau đó.
+
+Gửi coin nghĩa là tạo một giao dịch và thêm nó vào blockchain thông qua việc đào một khối. Nhưng Bitcoin không thực hiện việc này ngay lập tức. Thay vào đó, nó đưa tất cả các giao dịch mới vào một nhóm bộ nhớ (mempool), và khi một thợ đào sẵn sàng đào một khối, nó sẽ lấy tất cả các giao dịch từ nhóm bộ nhớ và tạo ra một khối ứng viên. Các giao dịch chỉ được xác nhận khi một khối chứa chúng được đào và thêm vào blockchain.
 
 ## Phần tiếp theo đang cập nhật...
 
