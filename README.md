@@ -55,7 +55,7 @@ Băm là một quá trình thu thập giá trị băm cho dữ liệu được c
 
 ![](https://jeiwan.net/images/hashing-example.png)
 
-Trong blockchain, hàm băm được sử dụng để đảm bảo tính nhất quán của một khối. Dữ liệu đầu vào cho thuật toán băm chứa hàm băm của khối trước đó, do đó việc sửa đổi một khối trong chuỗi là bất khả thi (hoặc ít nhất là khá khó khăn): người ta phải tính toán lại hàm băm của khối đó và hàm băm của tất cả các khối sau nó.
+Trong blockchain, hàm băm được sử dụng để đảm bảo tính nhất quán của một khối. Dữ liệu đầu vào cho thuật toán băm chứa mã băm của khối trước đó, do đó việc sửa đổi một khối trong chuỗi là bất khả thi (hoặc ít nhất là khá khó khăn): người ta phải tính toán lại mã băm của khối đó và mã băm của tất cả các khối sau nó.
 
 ## Hashcash
 
@@ -66,7 +66,7 @@ Qua đoạn thông tin từ wiki trên, ngay lập tức ta có thể kết lu�
 
 Cùng xem xét kỹ hơn các yêu cầu mà một hàm băm phải đáp ứng. Trong triển khai gốc Hashcash, yêu cầu này có thể hiểu đơn giản là "20 bit đầu tiên của hàm băm phải là số 0". Trong Bitcoin, yêu cầu này được điều chỉnh theo thời gian, bởi vì theo thiết kế, một khối phải được tạo ra sau mỗi 10 phút, nhưng sức mạnh tính toán sẽ tăng theo thời gian và ngày càng có nhiều thợ đào tham gia mạng lưới.
 
-Để dễ hình dung, hãy dùng dữ liệu từ ví dụ trước ("I like donuts") và gắn thêm vào đó một giá trị để mã băm của nó sẽ bắt đầu bằng 3 số 0:
+Để dễ hình dung, hãy dùng dữ liệu từ ví dụ trước ("I like donuts") và gắn thêm vào đó một giá trị để mã băm của nó sẽ bắt đầu bằng 3 byte số 0:
 
 ![](https://jeiwan.net/images/hashcash-example.png)
 
@@ -83,7 +83,35 @@ type Block struct {
 ```
 Giờ đây `nonce` phải được lưu thành một thuộc tính của Block vì nó cần thiết để xác minh một "bằng chứng".
 
+## Địa chỉ ví Bitcoin
+
+Đây là một ví dụ về địa chỉ Bitcoin: **1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa**. Đây là địa chỉ Bitcoin đầu tiên, được cho là thuộc về Satoshi Nakamoto. Địa chỉ Bitcoin là công khai, nếu bạn muốn gửi tiền cho ai đó, bạn cần biết địa chỉ của họ. Nhưng địa chỉ không phải là thứ xác định bạn là chủ sở hữu của một "ví". Trên thực tế, những địa chỉ như vậy là một biểu diễn có thể đọc được của khóa công khai. Trong Bitcoin, danh tính của bạn là một cặp (hoặc các cặp) khóa riêng tư và công khai được lưu trữ trên máy tính của bạn (hoặc được lưu trữ ở một nơi khác mà bạn có quyền truy cập).
+
+Về bản chất, ví Bitcoin chỉ là một cặp khóa như vậy. Khi bạn cài đặt ứng dụng ví hoặc sử dụng ứng dụng khách Bitcoin để tạo địa chỉ mới, một cặp khóa sẽ được tạo cho bạn. Người nắm giữ khóa riêng sẽ kiểm soát tất cả số tiền được gửi đến khóa này trong Bitcoin.
+
+Khóa riêng tư và khóa công khai chỉ là những chuỗi byte ngẫu nhiên, do đó chúng không thể được in ra màn hình và con người có thể đọc được. Đó là lý do tại sao Bitcoin sử dụng một thuật toán để chuyển đổi khóa công khai thành chuỗi ký tự mà con người có thể đọc được.
+
+## Base58
+
+Quay lại địa chỉ Bitcoin đã đề cập lúc nãy: **1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa**. Đây là một biểu diễn khóa công khai mà con người có thể đọc được. Và nếu chúng ta giải mã nó, khóa công khai trông như thế này (dưới dạng một chuỗi byte được viết theo hệ thập lục phân):
+
+```
+0062E907B15CBF27D5425399EBF6F0FB50EBB88F18C29B7D93
+```
+
+Bitcoin sử dụng thuật toán Base58 để chuyển đổi khóa công khai sang định dạng dễ đọc. Thuật toán này rất giống với thuật toán Base64 nổi tiếng, nhưng sử dụng bảng chữ cái ngắn hơn: một số chữ cái đã bị loại bỏ khỏi bảng chữ cái để tránh một số cuộc tấn công lợi dụng sự giống nhau giữa các chữ cái. Do đó, không có các ký hiệu sau: 0 (số không), O (chữ o viết hoa), I (chữ i viết hoa), l (chữ L viết thường), vì chúng trông giống nhau. Ngoài ra, không có ký hiệu + và /.
+
+## Elliptic Curve Cryptography
+
+Như ta đã biết, khóa công khai và khóa riêng là các chuỗi byte ngẫu nhiên. Vì khóa riêng được sử dụng để xác định chủ sở hữu của đồng tiền, nên có một điều kiện bắt buộc: thuật toán ngẫu nhiên phải tạo ra các byte thực sự ngẫu nhiên. Chúng ta không muốn vô tình tạo ra một khóa riêng thuộc sở hữu của người khác.
+
+Bitcoin sử dụng đường cong elliptic để tạo khóa riêng. Đường cong elliptic là một khái niệm toán học phức tạp. Cực kỳ phức tạp! Nếu bạn tò mò thì có thể tìm hiểu thêm trên internet, ở đây chúng ta sẽ chỉ sử dụng nó như một thứ sẵn có mà không nghiên cứu sâu.
+
+Ngoài ra, Bitcoin sử dụng thuật toán ECDSA (Elliptic Curve Digital Signature Algorithm - Thuật toán chữ ký số dựa trên đường cong elliptic) để ký các giao dịch.
+
 ## Giao dịch - Transactions
+
+Trước khi tìm hiểu về chữ ký số trong bitcoin, ta hãy cùng tìm hiểu khái niệm cốt lõi trong Bitcoin: **giao dịch**.
 
 Giao dịch là cốt lõi của Bitcoin, và mục đích duy nhất của blockchain là lưu trữ giao dịch một cách an toàn và đáng tin cậy, để không ai có thể sửa đổi chúng sau khi chúng được tạo ra.
 
@@ -162,30 +190,74 @@ Tóm lại, **outputs** chưa sử dụng là **outputs** chưa được tham ch
 Giả sử ví A muốn gửi `n` coins cho ví B:
 1. Đầu tiên, phải tìm trong blockchain một lượng coin lớn hơn hoặc bằng `n` chưa chi tiêu thuộc về ví A và danh sách các index của các **outputs** này.
 2. Từ các **outputs** chưa chi vừa tìm, ta tạo một danh sách các **inputs** tương ứng tham chiếu đến các **outputs** này.
-3. Tiếp theo, tạo một **outputs** và khóa nó với địa chỉ của người nhận. Nếu số coins tổng thể mà ta tìm được lớn hơn số tiền cần gửi, khi này phải tạo thêm một **outputs** nữa có giá trị bằng phần tiền thừa và khóa nó với địa chỉ của người gửi.
+3. Tiếp theo, tạo một **outputs** và khóa nó với địa chỉ của người nhận. Nếu số coins tổng thể mà ta tìm được lớn hơn số tiền cần gửi, khi này phải tạo thêm một **outputs** nữa có giá trị bằng phần tiền thừa và khóa nó với địa chỉ của người gửi (*khóa* có thể hiểu là cấp quyền sở hữu giá trị của **outputs** cho địa chỉ đó).
 4. Khi đã có đủ **inputs** và **outputs** hợp lệ, một **Transaction** sẽ được tạo ra.
-5. Cuối cùng, sau khi đã có đủ dữ liệu cần thiết, việc "đào" sẽ được tiến hành sau đó.
+5. Để hoàn tất một giao dịch, giao dịch đó phải được ký bằng khóa riêng tư của người gửi (ta sẽ cùng tìm hiểu ở phần tiếp theo).
+6. Cuối cùng, sau khi đã có đủ dữ liệu cần thiết, việc "đào" sẽ được tiến hành sau đó.
 
 Gửi coin nghĩa là tạo một giao dịch và thêm nó vào blockchain thông qua việc đào một khối. Nhưng Bitcoin không thực hiện việc này ngay lập tức. Thay vào đó, nó đưa tất cả các giao dịch mới vào một nhóm bộ nhớ (mempool), và khi một thợ đào sẵn sàng đào một khối, nó sẽ lấy tất cả các giao dịch từ nhóm bộ nhớ và tạo ra một khối ứng viên. Các giao dịch chỉ được xác nhận khi một khối chứa chúng được đào và thêm vào blockchain.
 
-## Phần tiếp theo đang cập nhật...
+## Phần thưởng
 
+Phần thưởng chỉ là một giao dịch Coinbase. Khi một nút khai thác bắt đầu khai thác một khối mới, nó sẽ lấy các giao dịch từ hàng đợi và thêm một giao dịch Coinbase vào đó. **Outputs** duy nhất của giao dịch Coinbase chứa mã băm khóa công khai của thợ đào.
 
+## Chữ ký số - Digital Signatures
 
+Giao dịch phải được ký vì đây là cách duy nhất trong Bitcoin để đảm bảo rằng người dùng không thể chi tiêu tiền của người khác. Nếu chữ ký không hợp lệ, giao dịch cũng được coi là không hợp lệ và do đó không thể được thêm vào blockchain.
 
+![](https://jeiwan.net/images/signing-scheme.png)
 
+Những phần nào của giao dịch thực sự được ký? Việc lựa chọn dữ liệu để ký là khá quan trọng. Vấn đề là dữ liệu được ký phải chứa thông tin nhận dạng dữ liệu theo một cách duy nhất.
 
+Các dữ liệu sau đây phải được ký:
 
+1. Mã băm của khóa công khai được lưu trữ trong các **outputs** đã mở khóa. Dùng để xác định "người gửi" của một giao dịch.
+2. Mã băm của khóa công khai được lưu trữ trong các **outputs** mới - đã khóa. Dùng để xác định "người nhận" của một giao dịch.
+3. Giá trị của **outputs** mới.
 
+> Trong Bitcoin, logic khóa/mở khóa được lưu trữ trong các tập lệnh, được lưu trữ trong ScriptSig Và ScriptPubKeycác trường đầu vào và đầu ra tương ứng. Vì Bitcoin cho phép các loại tập lệnh khác nhau, nên nó ký toàn bộ nội dung của ScriptPubKey.
 
+Trong dự án của chúng ta sẽ không triển khai ngôn ngữ kịch bản này mà sẽ thay thế logic khóa/mở khóa bằng các phương thức trong quá trình gửi tiền. Vậy nên cấu trúc của **outputs** và **inputs** sẽ được sửa lại như sau:
 
+```go
+type TXOutput struct {
+    Value      int
+    PubKeyHash []byte
+}
+```
+`PubKeyHash` dùng để xác nhận đầu ra có thuộc về địa chỉ ví được tạo từ *public key* hay không.
 
+```go
+type TXInput struct {
+    Txid      []byte
+    Vout      int
+    Signature []byte
+    PubKey    []byte
+}
+```
+Mỗi giao dịch được tạo ra tương ứng với một **inputs** được ký. `Signature` và `PubKey` chính là dữ liệu dùng để xác thực **inputs** có được tham chiếu đến **outputs** thuộc quyền sở hữu của người người hay không.
 
+> *Khóa* nghĩa là gắn quyền sở hữu **outputs mới** cho địa chỉ người nhận. Về cơ chế, ta sẽ gán mã băm của khóa công khai của người nhận vào trường `PubKeyHash` trong **outputs**.
+>
+> *Mở khóa* về bản chất là **outputs** đã được tham chiếu đến **inputs** nào đó. Vì mỗi **outputs** hợp lệ đã được khóa bởi người sở hữu nó nên nó có thể dùng để xác nhận người gửi.
 
+## UTXO Set
 
+Cho đến hiện tại, chúng ta chỉ lưu trữ toàn bộ blockchain và sử dụng nó như một tổng thể.
 
+Thực tế, trong Bitcoin Core sử dụng 2 "buckets" để lưu dữ liệu:
+1. `block` lưu trữ meta data mô tả tất cả các khối trong chuỗi.
+2. `chainstate` lưu trữ trạng thái của chuỗi, bao gồm tất cả các đầu ra giao dịch chưa sử dụng và một số meta data.
 
+`chainstate` không lưu trữ giao dịch. Thay vào đó, nó lưu trữ cái gọi là tập hợp UTXO, hay tập hợp các đầu ra giao dịch chưa sử dụng.
 
+Vậy tại sao chúng ta lại muốn cần UTXO?
+
+Vì các giao dịch được lưu trữ trong các khối, ta phải lặp lại từng khối trong blockchain và kiểm tra mọi giao dịch trong đó để tìm các giao dịch có đầu ra chưa sử dụng. Tính đến ngày 25 tháng 11 năm 2025, Bitcoin có 925.105 khối và toàn bộ cơ sở dữ liệu chiếm hơn 490GB dung lượng ổ đĩa. Điều này có nghĩa là người ta phải chạy một nút đầy đủ để xác thực giao dịch. Hơn nữa, việc xác thực giao dịch sẽ yêu cầu lặp lại trên nhiều khối.
+
+Giải pháp cho vấn đề này là tạo một chỉ mục chỉ lưu trữ các đầu ra chưa sử dụng, và đây chính là chức năng của bộ UTXO: đây là một bộ nhớ đệm được xây dựng từ tất cả các giao dịch blockchain (bằng cách lặp lại các khối, nhưng chỉ được thực hiện một lần), và sau đó được sử dụng để tính toán số dư và xác thực các giao dịch mới. Bộ UTXO có dung lượng khoảng 11Gb tính đến tháng 11 năm 2025.
+
+Khi một khối mới được khai thác, bộ UTXO sẽ được cập nhật. Cập nhật nghĩa là xóa các đầu ra đã sử dụng và thêm các đầu ra chưa sử dụng từ các giao dịch mới được khai thác. Nếu một giao dịch mà các đầu ra đã bị xóa không còn chứa đầu ra nào nữa, thì nó cũng bị xóa.
 
 ---
 ## Demo
