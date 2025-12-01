@@ -72,6 +72,20 @@ Cùng xem xét kỹ hơn các yêu cầu mà một hàm băm phải đáp ứng.
 
 `ca07ca` là giá trị thập lục phân của bộ đếm, tức là 13240266 trong hệ thập phân. Và con số ngẫu nhiên mà ta đã tìm được này gọi là `nonce`.
 
+> Đầu ra của SHA-256 có giá trị từ 0 đến (2^256)-1
+
+Giả sử chuỗi cơ sở mà chúng ta sẽ xử lý là "Hello, world!". Mục tiêu của chúng ta là tìm một biến thể của chuỗi này mà SHA-256 băm thành một giá trị nhỏ hơn 2^240. Chúng ta biến đổi chuỗi bằng cách thêm một giá trị nguyên vào cuối chuỗi (nonce), và tăng giá trị này mỗi lần, sau đó diễn giải kết quả băm thành một số nguyên dài và kiểm tra xem nó có nhỏ hơn giá trị mục tiêu 2^240 hay không. Việc tìm kiếm kết quả khớp với "Hello, world!" mất 4251 lần thử.
+
+```
+"Hello, world!0" => 1312af178c253f84028d480a6adc1e25e81caa44c749ec81976192e2ec934c64 = 2^252.253458683
+"Hello, world!1" => e9afc424b79e4f6ab42d99c81156d3a17228d6e1eef4139be78e948a9332a7d8 = 2^255.868431117
+"Hello, world!2" => ae37343a357a8297591625e7134cbea22f5928be8ca2a32aa475cf05fd4266b7 = 2^255.444730341
+...
+"Hello, world!4248" => 6e110d98b388e77e9c6f042ac6b497cec46660deef75a55ebc7cfdf65cc0b965 = 2^254.782233115
+"Hello, world!4249" => c004190b822f1669cac8dc37e761cb73652e7832fb814565702245cf26ebb9e6 = 2^255.585082774
+"Hello, world!4250" => 0000c3af42fc31103f1fdc0151fa747ff87349a4714df7cc52ea464e12dcd4e9 = 2^239.61238653
+```
+
 ```go
 type Block struct {
     Timestamp     int64
@@ -380,19 +394,19 @@ Chuyển sang các nút Wallet và tạo ra một số ví để thực hiện g
 Chuyển sang Fullnode và thực hiện gửi coin cho ví 1 và ví 2.
 - Gửi tiền và đào các block:
     ```bash
-    tcoin send -from <address> -to <address> -amount 10 -mine
+    tcoin send -amount 10 -mine -from <address> -to <address>
     ```
     > Ta dùng flag -mine để đào các khối ngay khi tạo ra các giao dịch vì ban đầu không hề có nút khai thác nào trong mạng.
 
 - Gửi cho ví 1 và ví 2 mỗi ví 10 coin:
     ```bash
-    [fullnode]$ tcoin send -from 13QLoHmb1QrUeZK4DNDv1DP337rojpCW9t -to 1BYYGAJmGiH8XZs2hHcCkd6ix3yaKPLFN8 -amount 10 -mine
+    [fullnode]$ tcoin send -amount 10 -mine -from 13QLoHmb1QrUeZK4DNDv1DP337rojpCW9t -to 1BYYGAJmGiH8XZs2hHcCkd6ix3yaKPLFN8
     000063505c720728db4afc2c264a868f09d644826e5fd3b8368c14e401614fd6
 
     Success!
 
 
-    [fullnode]$ tcoin send -from 13QLoHmb1QrUeZK4DNDv1DP337rojpCW9t -to 1BmsTS98y8VgpCmVbncW4WL2u7fy3W4ZTv -amount 10 -mine
+    [fullnode]$ tcoin send -amount 10 -mine -from 13QLoHmb1QrUeZK4DNDv1DP337rojpCW9t -to 1BmsTS98y8VgpCmVbncW4WL2u7fy3W4ZTv
     0000f54936e50d84af9a41eee82b265e2f64e36a014add92d75b466fc56cbfd5
 
     Success!
