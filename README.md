@@ -1,3 +1,14 @@
+# Building Blockchain in Go
+
+> Tài liệu này được viết lại và tổng hợp từ series:
+>
+> * [Jeiwan/blockchain_go repo](https://github.com/Jeiwan/blockchain_go)
+> * [Building Blockchain in Go](https://jeiwan.net/posts/building-blockchain-in-go-part-1)
+>
+> Mục tiêu của tài liệu là giải thích cách hoạt động của blockchain bằng cách tự xây dựng một blockchain tối giản bằng Golang. Nội dung tập trung vào việc hiểu cơ chế cốt lõi của Bitcoin thay vì tái hiện hoàn chỉnh Bitcoin Core.
+
+---
+
 ## Giới thiệu
 
 Blockchain là một trong những công nghệ mang tính cách mạng nhất của thế kỷ 21, vẫn đang trong quá trình hoàn thiện và tiềm năng của nó vẫn chưa được khai thác hết. Về bản chất, blockchain chỉ là một cơ sở dữ liệu phân tán chứa các bản ghi. Nhưng điều làm nên sự độc đáo của nó là nó không phải là một cơ sở dữ liệu riêng tư mà là một cơ sở dữ liệu công khai, tức là mọi người sử dụng nó đều có bản sao đầy đủ hoặc một phần của nó. Và một bản ghi mới chỉ có thể được thêm vào khi có sự đồng ý của những người quản lý cơ sở dữ liệu khác. Hơn nữa, chính blockchain đã tạo ra tiền điện tử và hợp đồng thông minh.
